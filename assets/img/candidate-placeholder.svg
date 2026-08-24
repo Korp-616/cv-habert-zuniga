@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 930" role="img" aria-label="Retrato ilustrativo">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#12304a"/><stop offset="1" stop-color="#0b5ea8"/></linearGradient>
+    <radialGradient id="halo"><stop stop-color="#fff" stop-opacity=".28"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="800" height="930" fill="url(#bg)"/>
+  <circle cx="650" cy="160" r="220" fill="url(#halo)"/>
+  <path d="M0 690 C180 610 290 760 430 690 S650 610 800 700 V930 H0Z" fill="#081b2d" opacity=".28"/>
+  <circle cx="400" cy="325" r="135" fill="#d7e3ea"/>
+  <path d="M265 315c15-150 255-168 275 0-72-65-189-65-275 0z" fill="#24384a"/>
+  <circle cx="350" cy="320" r="8" fill="#4d6477"/><circle cx="450" cy="320" r="8" fill="#4d6477"/>
+  <path d="M355 385c30 26 60 26 90 0" fill="none" stroke="#6a7f90" stroke-width="7" stroke-linecap="round"/>
+  <path d="M205 930c15-240 115-360 195-360s180 120 195 360" fill="#e8f0f5"/>
+  <path d="M320 600l80 120 80-120" fill="#fff"/>
+  <text x="48" y="72" fill="#fff" opacity=".75" font-family="Arial, sans-serif" font-size="20" font-weight="700">MVP DEMOSTRATIVO</text>
+  <text x="48" y="850" fill="#fff" font-family="Arial, sans-serif" font-size="34" font-weight="800">Retrato ilustrativo</text>
+  <text x="48" y="886" fill="#fff" opacity=".7" font-family="Arial, sans-serif" font-size="18">No representa una fotografía oficial</text>
+</svg>

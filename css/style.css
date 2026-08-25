@@ -1542,3 +1542,440 @@ html[data-bs-theme="dark"] {
     border-top: 2px solid rgba(223,184,77,.65);
   }
 }
+
+/* Obras por Impuestos */
+.tax-works-section {
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 92% 8%, rgba(223,184,77,.18), transparent 27%),
+    radial-gradient(circle at 5% 68%, rgba(200,66,72,.08), transparent 30%),
+    var(--surface-2);
+}
+
+.tax-proof {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 390px);
+  gap: 2rem;
+  align-items: stretch;
+  padding: clamp(1.5rem, 4vw, 3rem);
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 32px;
+  color: #fff;
+  background:
+    radial-gradient(circle at 12% 12%, rgba(223,184,77,.15), transparent 34%),
+    linear-gradient(135deg, #252321, #423330);
+  box-shadow: 0 24px 60px rgba(42,31,28,.20);
+}
+
+.tax-proof::after {
+  position: absolute;
+  z-index: -1;
+  right: -70px;
+  bottom: -110px;
+  width: 290px;
+  height: 290px;
+  border: 58px solid rgba(255,255,255,.035);
+  border-radius: 50%;
+  content: "";
+}
+
+.tax-proof-copy {
+  align-self: center;
+}
+
+.tax-proof-eyebrow,
+.tax-closing-eyebrow {
+  display: inline-block;
+  color: #ead487;
+  font-size: .73rem;
+  font-weight: 900;
+  letter-spacing: .11em;
+  text-transform: uppercase;
+}
+
+.tax-proof h3 {
+  max-width: 720px;
+  margin: .65rem 0 .8rem;
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -.04em;
+}
+
+.tax-proof-copy > p {
+  max-width: 720px;
+  margin: 0;
+  color: rgba(255,255,255,.68);
+  font-size: 1rem;
+}
+
+.tax-proof-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.2rem 2rem;
+  align-items: center;
+  margin-top: 1.8rem;
+}
+
+.tax-proof-stat {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .2rem .65rem;
+  align-items: center;
+}
+
+.tax-proof-stat strong {
+  grid-row: 1 / 3;
+  color: #ead487;
+  font-size: 3.1rem;
+  font-weight: 950;
+  line-height: .9;
+}
+
+.tax-proof-stat span,
+.tax-proof-areas {
+  color: rgba(255,255,255,.76);
+  font-size: .78rem;
+  font-weight: 800;
+}
+
+.tax-proof-areas {
+  display: flex;
+  gap: .55rem;
+  align-items: center;
+  max-width: 310px;
+}
+
+.tax-proof-areas i {
+  color: #ead487;
+  font-size: 1.15rem;
+}
+
+.tax-proof-amount {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(1.5rem, 3vw, 2.3rem);
+  border: 1px solid rgba(255,255,255,.28);
+  border-radius: 26px;
+  color: #292722;
+  background: linear-gradient(145deg, #f1dd96, #d8ae42);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.45);
+}
+
+.tax-proof-amount > span {
+  font-size: .73rem;
+  font-weight: 900;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.tax-proof-amount strong {
+  margin: .5rem 0 .8rem;
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight: 950;
+  line-height: .9;
+  letter-spacing: -.055em;
+}
+
+.tax-proof-amount small {
+  padding-top: .8rem;
+  border-top: 1px solid rgba(41,39,34,.18);
+  font-size: .74rem;
+  font-weight: 750;
+}
+
+.tax-block-heading {
+  max-width: 820px;
+  margin: 5.5rem 0 1.8rem;
+}
+
+.tax-block-heading h3,
+.tax-future-heading h3 {
+  margin: .4rem 0 .65rem;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  font-weight: 900;
+  line-height: 1.02;
+  letter-spacing: -.035em;
+}
+
+.tax-work-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: clamp(1.25rem, 3vw, 1.8rem);
+  border: 1px solid var(--line);
+  border-radius: 25px;
+  background: var(--surface);
+  box-shadow: 0 12px 34px rgba(52,42,35,.07);
+  transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+}
+
+.tax-work-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(200,66,72,.24);
+  box-shadow: 0 22px 44px rgba(52,42,35,.12);
+}
+
+.tax-work-card-head,
+.tax-future-card-head {
+  display: flex;
+  gap: .75rem;
+  align-items: center;
+}
+
+.tax-work-icon,
+.tax-future-icon,
+.tax-work-breach-icon {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  color: #b83c42;
+  background: rgba(200,66,72,.08);
+}
+
+.tax-work-area {
+  color: #a9363c;
+  font-size: .72rem;
+  font-weight: 900;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+
+.tax-work-card h4 {
+  margin: 1.15rem 0 .65rem;
+  font-size: clamp(1.2rem, 2.2vw, 1.5rem);
+  font-weight: 900;
+  line-height: 1.14;
+  letter-spacing: -.02em;
+}
+
+.tax-work-description {
+  margin: 0;
+  color: var(--muted);
+  font-size: .9rem;
+}
+
+.tax-work-investment {
+  display: flex;
+  gap: .6rem 1rem;
+  align-items: end;
+  justify-content: space-between;
+  margin-top: auto;
+  padding: 1.35rem 0 1rem;
+}
+
+.tax-work-investment span {
+  color: var(--muted);
+  font-size: .7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.tax-work-investment strong {
+  color: #a9363c;
+  font-size: 1.25rem;
+  font-weight: 950;
+  white-space: nowrap;
+}
+
+.tax-work-breach {
+  display: flex;
+  gap: .75rem;
+  align-items: center;
+  padding: .9rem;
+  border-radius: 17px;
+  background: var(--surface-2);
+}
+
+.tax-work-breach-icon {
+  width: 38px;
+  height: 38px;
+  color: #9f7b24;
+  background: rgba(223,184,77,.13);
+}
+
+.tax-work-breach .mini-label {
+  color: #9f7b24;
+}
+
+.tax-work-breach p {
+  margin: .15rem 0 0;
+  color: var(--text);
+  font-size: .78rem;
+  font-weight: 720;
+  line-height: 1.35;
+}
+
+.tax-future-shell {
+  margin-top: 6rem;
+  padding: clamp(1.4rem, 4vw, 3rem);
+  border: 1px solid var(--line);
+  border-radius: 32px;
+  background: var(--surface);
+  box-shadow: 0 18px 48px rgba(52,42,35,.08);
+}
+
+.tax-future-heading {
+  max-width: 850px;
+  margin-bottom: 2rem;
+}
+
+.tax-portfolio-label {
+  display: inline-flex;
+  margin-top: .6rem;
+  padding: .5rem .75rem;
+  border: 1px solid rgba(200,66,72,.16);
+  border-radius: 999px;
+  color: #a9363c;
+  background: rgba(200,66,72,.07);
+  font-size: .7rem;
+  font-weight: 900;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.tax-future-card {
+  height: 100%;
+  padding: 1.2rem;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--surface-2);
+}
+
+.tax-future-card h4 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 900;
+}
+
+.tax-future-card ul {
+  display: grid;
+  gap: .6rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tax-future-card li {
+  display: flex;
+  gap: .5rem;
+  align-items: start;
+  color: var(--muted);
+  font-size: .82rem;
+  line-height: 1.35;
+}
+
+.tax-future-card li i {
+  margin-top: .08rem;
+  color: #b83c42;
+}
+
+.tax-closing {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, .65fr);
+  gap: 2rem;
+  align-items: center;
+  margin-top: 2rem;
+  padding: clamp(1.5rem, 4vw, 3rem);
+  border-radius: 30px;
+  color: #fff;
+  background:
+    radial-gradient(circle at 92% 12%, rgba(223,184,77,.16), transparent 34%),
+    linear-gradient(135deg, #a9363c, #322725 72%);
+  box-shadow: 0 22px 54px rgba(52,42,35,.18);
+}
+
+.tax-closing h3 {
+  max-width: 760px;
+  margin: .5rem 0 .7rem;
+  font-size: clamp(1.8rem, 4vw, 3.1rem);
+  font-weight: 950;
+  line-height: 1;
+  letter-spacing: -.04em;
+}
+
+.tax-closing p {
+  max-width: 760px;
+  margin: 0;
+  color: rgba(255,255,255,.72);
+}
+
+.tax-closing-pillars {
+  display: grid;
+  gap: .7rem;
+}
+
+.tax-closing-pillars span {
+  display: flex;
+  gap: .65rem;
+  align-items: center;
+  padding: .8rem .95rem;
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 14px;
+  color: rgba(255,255,255,.86);
+  background: rgba(255,255,255,.055);
+  font-size: .78rem;
+  font-weight: 850;
+}
+
+.tax-closing-pillars i {
+  color: #ead487;
+}
+
+html[data-bs-theme="dark"] .tax-works-section {
+  background:
+    radial-gradient(circle at 92% 8%, rgba(223,184,77,.09), transparent 27%),
+    radial-gradient(circle at 5% 68%, rgba(200,66,72,.08), transparent 30%),
+    var(--surface-2);
+}
+
+html[data-bs-theme="dark"] .tax-work-area,
+html[data-bs-theme="dark"] .tax-work-investment strong,
+html[data-bs-theme="dark"] .tax-portfolio-label {
+  color: #de777c;
+}
+
+@media (max-width: 991.98px) {
+  .tax-proof,
+  .tax-closing {
+    grid-template-columns: 1fr;
+  }
+
+  .tax-proof-amount {
+    min-height: 240px;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .tax-proof,
+  .tax-future-shell,
+  .tax-closing {
+    border-radius: 24px;
+  }
+
+  .tax-proof-summary,
+  .tax-work-investment {
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .tax-proof-amount {
+    min-height: 210px;
+  }
+
+  .tax-block-heading {
+    margin-top: 4rem;
+  }
+
+  .tax-future-shell {
+    margin-top: 4.5rem;
+  }
+}

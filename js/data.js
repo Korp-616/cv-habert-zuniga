@@ -105,6 +105,7 @@ const siteData = {
       items: [
         { sectionId: "inicio", label: "Inicio" },
         { sectionId: "perfil", label: "Perfil" },
+        { sectionId: "obras-impuestos", label: "Obras por Impuestos" },
         { sectionId: "cayma", label: "Diagnóstico" },
         { sectionId: "propuestas", label: "Propuestas" },
         { sectionId: "roadmap", label: "Hoja de ruta" },
@@ -177,6 +178,7 @@ const siteData = {
       generic: "Contenido pendiente de publicación."
     },
     quickActions: [
+      { id: "quick-tax-works", sectionId: "obras-impuestos", label: "Obras por Impuestos", icon: "bi-buildings" },
       { id: "quick-proposals", sectionId: "propuestas", label: "Propuestas", icon: "bi-grid-1x2" },
       { id: "quick-roadmap", sectionId: "roadmap", label: "Hoja de ruta", icon: "bi-signpost-split" },
       { id: "quick-publications", sectionId: "galeria", label: "Publicaciones", icon: "bi-newspaper" }
@@ -297,6 +299,114 @@ const siteData = {
         { id: "career-mayor", dateLabel: "2015–2018", text: "Alcalde de la Municipalidad Distrital de Cayma." },
         { id: "career-councilor", dateLabel: "2019–2022", text: "Consejero regional por Arequipa." }
       ]
+    },
+
+    taxWorks: {
+      enabled: true,
+      heading: {
+        kicker: "Gestión Municipal 2015–2018",
+        title: "Obras por Impuestos: experiencia que se convierte en resultados",
+        description: "Entre 2015 y 2018 impulsamos Obras por Impuestos para acelerar la inversión pública y atender brechas concretas de educación, movilidad e infraestructura vial en Cayma."
+      },
+      proof: {
+        periodLabel: "Una gestión que supo gestionar",
+        title: "Cuatro proyectos que movilizaron inversión para Cayma",
+        description: "La capacidad técnica permitió convertir necesidades del distrito en proyectos adjudicados y orientados a mejorar servicios esenciales para la población.",
+        projectsLabel: "proyectos adjudicados",
+        amountLabel: "Inversión adjudicada acumulada",
+        headlineAmount: "S/ 25.2 millones",
+        exactAmountLabel: "Monto total adjudicado",
+        areasLabel: "Educación + movilidad + infraestructura vial"
+      },
+      worksHeading: {
+        kicker: "Resultados comprobables",
+        title: "Obras impulsadas durante la gestión",
+        description: "Una inversión enfocada en cerrar brechas que afectaban directamente la educación, la conectividad y la calidad de vida de los vecinos.",
+        investmentLabel: "Inversión adjudicada",
+        breachLabel: "Brecha atendida"
+      },
+      works: [
+        {
+          id: "dean-valdivia",
+          area: "Educación",
+          icon: "bi-mortarboard-fill",
+          title: "Mejoramiento y ampliación de la I.E. 40669 Dean Valdivia",
+          investment: 7858382.77,
+          description: "Mejores espacios para fortalecer la prestación del servicio de educación secundaria en Alto Cayma.",
+          breach: "Infraestructura y condiciones adecuadas para el aprendizaje."
+        },
+        {
+          id: "casimiro-cuadros",
+          area: "Movilidad urbana",
+          icon: "bi-signpost-split-fill",
+          title: "Transitabilidad en Casimiro Cuadros y sectores aledaños",
+          investment: 3836944.25,
+          description: "Intervención en Casimiro Cuadros – Sector I, Juan Pablo II, José Carlos Mariátegui, Santa María y Manuel A. Odría.",
+          breach: "Desplazamiento peatonal y vehicular en mejores condiciones."
+        },
+        {
+          id: "andres-avelino-san-pedro",
+          area: "Movilidad y conectividad",
+          icon: "bi-car-front-fill",
+          title: "Transitabilidad en Andrés Avelino Cáceres y San Pedro",
+          investment: 4418637.00,
+          description: "Inversión orientada a sectores que necesitaban mejores condiciones de accesibilidad y circulación urbana.",
+          breach: "Transitabilidad peatonal y vehicular."
+        },
+        {
+          id: "primero-de-junio",
+          area: "Infraestructura vial",
+          icon: "bi-cone-striped",
+          title: "Transitabilidad en las calles faltantes de Primero de Junio",
+          investment: 9082604.00,
+          description: "Mejoramiento vial en calles que ya contaban con saneamiento básico, pero mantenían necesidades pendientes de transitabilidad.",
+          breach: "Infraestructura vial y accesibilidad urbana."
+        }
+      ],
+      future: {
+        kicker: "2027–2030 | El siguiente paso",
+        title: "Experiencia para volver a conseguir inversión",
+        description: "Proponemos estructurar una cartera prioritaria, cerrar las brechas técnicas y buscar alianzas con el sector privado para acelerar proyectos estratégicos mediante Obras por Impuestos.",
+        portfolioLabel: "Cartera prioritaria para estructurar y gestionar",
+        categories: [
+          {
+            id: "future-mobility",
+            label: "Movilidad y conectividad",
+            icon: "bi-signpost-2-fill",
+            items: ["Puente Villa Continental", "Puente Arquillo", "Vía de Evitamiento del Valle Chilina", "Vía Samay"]
+          },
+          {
+            id: "future-health",
+            label: "Salud",
+            icon: "bi-hospital-fill",
+            items: ["Hospital Nivel II"]
+          },
+          {
+            id: "future-education",
+            label: "Educación",
+            icon: "bi-book-fill",
+            items: ["C.E. Almirante Miguel Grau", "C.E. Francisco Bolognesi", "C.E. José Cornejo", "C.E. Lorenzo Acosta, en articulación con el GRA"]
+          },
+          {
+            id: "future-urban",
+            label: "Equipamiento urbano",
+            icon: "bi-shop",
+            items: ["Mercado de Cayma"]
+          },
+          {
+            id: "future-culture",
+            label: "Ciencia, cultura y educación",
+            icon: "bi-stars",
+            items: ["Planetario"]
+          }
+        ]
+      },
+      closing: {
+        eyebrow: "No partimos de cero",
+        title: "Partimos de una experiencia que ya demostró resultados.",
+        description: "2015–2018: gestionamos inversión. 2027–2030: queremos volver a gestionar para cerrar las brechas que aún siguen pendientes.",
+        pillars: ["Experiencia para gestionar", "Capacidad para conseguir inversión", "Visión para cerrar brechas"]
+      }
     },
 
     district: {
@@ -1349,6 +1459,7 @@ const siteData = {
     navigation: [
       { sectionId: "inicio", label: "Inicio" },
       { sectionId: "perfil", label: "Perfil" },
+      { sectionId: "obras-impuestos", label: "Obras por Impuestos" },
       { sectionId: "propuestas", label: "Propuestas" },
       { sectionId: "roadmap", label: "Hoja de ruta" },
       { sectionId: "galeria", label: "Publicaciones" },

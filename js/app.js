@@ -17,7 +17,7 @@
   const recordPaths = new WeakMap();
   const TIKTOK_EMBED_SCRIPT_URL = "https://www.tiktok.com/embed.js";
   const SECTION_IDS = new Set([
-    "inicio", "indicadores", "perfil", "cayma", "propuestas", "roadmap",
+    "inicio", "indicadores", "perfil", "obras-impuestos", "cayma", "propuestas", "roadmap",
     "proyectos", "triptico", "agenda", "galeria", "redes"
   ]);
 
@@ -101,6 +101,15 @@
       hero: { enabled: false, eyebrow: "", description: "", actions: [], highlights: [], card: {}, scroll: {} },
       stats: { enabled: false, kicker: "", items: [] },
       profile: { enabled: false, heading: {}, description: "", cards: [], timelineHeading: {}, timeline: [] },
+      taxWorks: {
+        enabled: false,
+        heading: {},
+        proof: {},
+        worksHeading: {},
+        works: [],
+        future: { categories: [] },
+        closing: { pillars: [] }
+      },
       district: { enabled: false, heading: {}, chart: { scale: { min: 0, max: 100 } }, detail: {}, metrics: [] },
       axes: { enabled: false, itemLabel: "", items: [] },
       proposals: { enabled: false, heading: {}, filterAriaLabel: "", categories: [], items: [] },
@@ -458,6 +467,23 @@
     profile.timelineHeading.chip = normalizeConfiguredText(profile.timelineHeading.chip, "sections.profile.timelineHeading.chip");
     profile.cards = normalizeRecords(profile.cards, "sections.profile.cards", (item, path) => requireTextFields(item, ["title", "text"], path));
     profile.timeline = normalizeRecords(profile.timeline, "sections.profile.timeline", (item, path) => requireTextFields(item, ["dateLabel", "text"], path));
+
+    const taxWorks = data.sections.taxWorks;
+    taxWorks.works = normalizeRecords(taxWorks.works, "sections.taxWorks.works", (item, path) => {
+      const investment = asNumber(item.investment);
+      if (!requireTextFields(item, ["area", "title", "description", "breach"], path)) return false;
+      if (investment === null || investment <= 0) {
+        warn(`${path}.investment`, "monto no numérico o menor que cero; se omitió la obra");
+        return false;
+      }
+      item.investment = investment;
+      return true;
+    });
+    taxWorks.future.categories = normalizeRecords(taxWorks.future.categories, "sections.taxWorks.future.categories", (item, path) => {
+      item.items = asArray(item.items).map(asText).filter(Boolean);
+      return requireTextFields(item, ["label"], path) && item.items.length > 0;
+    });
+    taxWorks.closing.pillars = asArray(taxWorks.closing.pillars).map(asText).filter(Boolean);
 
     const district = data.sections.district;
     district.detail.chip = normalizeConfiguredText(district.detail.chip, "sections.district.detail.chip");
@@ -927,6 +953,7 @@
   function computeVisibleSections() {
     const sections = data.sections;
     const profileHasContent = Boolean(asText(sections.profile.description) || sections.profile.cards.length || sections.profile.timeline.length);
+    const taxWorksHasContent = sections.taxWorks.works.length > 0;
     const districtHasContent = sections.district.metrics.length > 0 || (sections.axes.enabled !== false && sections.axes.items.length > 0);
     const projectsHasContent = (sections.projects.map.enabled !== false && sections.projects.map.locations.length > 0)
       || (sections.projects.featured.enabled !== false && getVisibleFeaturedItems().length > 0);
@@ -936,6 +963,7 @@
       inicio: sections.hero.enabled !== false && Boolean(asText(identity.name)),
       indicadores: sections.stats.enabled !== false && sections.stats.items.length > 0,
       perfil: sections.profile.enabled !== false && profileHasContent,
+      "obras-impuestos": sections.taxWorks.enabled !== false && taxWorksHasContent,
       cayma: sections.district.enabled !== false && districtHasContent,
       propuestas: sections.proposals.enabled !== false && sections.proposals.items.length > 0,
       roadmap: sections.roadmap.enabled !== false && sections.roadmap.stages.length > 0,
@@ -1229,6 +1257,108 @@
         timeline.append(article);
       });
     }
+  }
+
+  function formatSoles(value) {
+    const amount = asNumber(value) ?? 0;
+    const formatted = new Intl.NumberFormat(data.site.locale, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(amount);
+    return `S/ ${formatted}`;
+  }
+
+  function renderTaxWorks() {
+    const section = data.sections.taxWorks;
+    const totalInvestment = section.works.reduce((sum, item) => sum + item.investment, 0);
+
+    setText("#taxWorksKicker", section.heading.kicker);
+    setText("#taxWorksTitle", section.heading.title);
+    setText("#taxWorksDescription", section.heading.description);
+
+    setText("#taxProofPeriod", section.proof.periodLabel);
+    setText("#taxProofTitle", section.proof.title);
+    setText("#taxProofDescription", section.proof.description);
+    setText("#taxProofProjectCount", section.works.length);
+    setText("#taxProofProjectsLabel", section.proof.projectsLabel);
+    setText("#taxProofAreas", section.proof.areasLabel);
+    setText("#taxProofAmountLabel", section.proof.amountLabel);
+    setText("#taxProofHeadlineAmount", section.proof.headlineAmount);
+    setText("#taxProofExactLabel", section.proof.exactAmountLabel);
+    setText("#taxProofExactAmount", formatSoles(totalInvestment));
+
+    setText("#taxWorksListKicker", section.worksHeading.kicker);
+    setText("#taxWorksListTitle", section.worksHeading.title);
+    setText("#taxWorksListDescription", section.worksHeading.description);
+    const worksGrid = $("#taxWorksGrid");
+    worksGrid.replaceChildren();
+    section.works.forEach((item, index) => {
+      const column = createElement("div", "col-md-6");
+      column.dataset.aos = "fade-up";
+      column.dataset.aosDelay = String((index % 2) * 70);
+      const article = createElement("article", "tax-work-card");
+      const head = createElement("div", "tax-work-card-head");
+      const icon = createElement("span", "tax-work-icon");
+      icon.append(createIcon(item.icon));
+      head.append(icon, createElement("span", "tax-work-area", item.area));
+
+      const investment = createElement("div", "tax-work-investment");
+      investment.append(
+        createElement("span", "", section.worksHeading.investmentLabel),
+        createElement("strong", "", formatSoles(item.investment))
+      );
+
+      const breach = createElement("div", "tax-work-breach");
+      const breachIcon = createElement("span", "tax-work-breach-icon");
+      breachIcon.append(createIcon("bi-bullseye"));
+      const breachCopy = createElement("div");
+      breachCopy.append(
+        createElement("span", "mini-label", section.worksHeading.breachLabel),
+        createElement("p", "", item.breach)
+      );
+      breach.append(breachIcon, breachCopy);
+
+      article.append(head, createElement("h4", "", item.title), createElement("p", "tax-work-description", item.description), investment, breach);
+      column.append(article);
+      worksGrid.append(column);
+    });
+
+    setText("#taxFutureKicker", section.future.kicker);
+    setText("#taxFutureTitle", section.future.title);
+    setText("#taxFutureDescription", section.future.description);
+    setText("#taxFuturePortfolioLabel", section.future.portfolioLabel);
+    const futureGrid = $("#taxFutureGrid");
+    futureGrid.replaceChildren();
+    section.future.categories.forEach((category, index) => {
+      const column = createElement("div", "col-md-6 col-xl-4");
+      column.dataset.aos = "fade-up";
+      column.dataset.aosDelay = String((index % 3) * 60);
+      const article = createElement("article", "tax-future-card");
+      const head = createElement("div", "tax-future-card-head");
+      const icon = createElement("span", "tax-future-icon");
+      icon.append(createIcon(category.icon));
+      head.append(icon, createElement("h4", "", category.label));
+      const list = createElement("ul");
+      category.items.forEach(item => {
+        const entry = createElement("li");
+        entry.append(createIcon("bi-check2"), document.createTextNode(displayText(item)));
+        list.append(entry);
+      });
+      article.append(head, list);
+      column.append(article);
+      futureGrid.append(column);
+    });
+
+    setText("#taxClosingEyebrow", section.closing.eyebrow);
+    setText("#taxClosingTitle", section.closing.title);
+    setText("#taxClosingDescription", section.closing.description);
+    const pillars = $("#taxClosingPillars");
+    pillars.replaceChildren();
+    section.closing.pillars.forEach(item => {
+      const pillar = createElement("span");
+      pillar.append(createIcon("bi-check-circle-fill"), document.createTextNode(displayText(item)));
+      pillars.append(pillar);
+    });
   }
 
   function renderDistrict() {
@@ -2258,6 +2388,7 @@
 
     runSection("indicadores", renderStats);
     runSection("perfil", renderProfile);
+    runSection("obras-impuestos", renderTaxWorks);
     runSection("cayma", renderDistrict);
     runSection("propuestas", () => renderProposals("all"));
     runSection("roadmap", () => renderRoadmap(roadmapStageId));

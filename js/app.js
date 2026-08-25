@@ -15,6 +15,7 @@
   const isSlug = value => /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(asText(value));
   const warnings = [];
   const recordPaths = new WeakMap();
+  const TIKTOK_EMBED_SCRIPT_URL = "https://www.tiktok.com/embed.js";
   const SECTION_IDS = new Set([
     "inicio", "indicadores", "perfil", "cayma", "propuestas", "roadmap",
     "proyectos", "triptico", "agenda", "galeria", "redes"
@@ -86,12 +87,11 @@
     ui: {
       navigation: { ariaLabel: "", homeAriaLabel: "", openMenuAriaLabel: "", items: [] },
       theme: { storageKey: "site-theme", toggleAriaLabel: "", lightAriaLabel: "", darkAriaLabel: "" },
-      demo: { cardSuffix: "", mockSuffix: "", modalLabel: "", roadmapLabel: "", gallerySuffix: "", mapSuffix: "", imageAltSuffix: "" },
+      demo: { cardSuffix: "", mockSuffix: "", modalLabel: "", roadmapLabel: "", mapSuffix: "", imageAltSuffix: "" },
       proposal: { allFilterLabel: "", openLabel: "", problemTitle: "", solutionTitle: "", scheduleTitle: "", actionsTitle: "", indicatorTitle: "", indicatorNote: "", modalCloseAriaLabel: "" },
       map: { typeLabel: "", markerAriaLabel: "", unavailableMessage: "" },
       trifold: { previousLabel: "", nextLabel: "", openLabel: "", closeLabel: "", printLabel: "" },
       events: { filters: [], initialFilter: "", upcomingStatus: "", pastStatus: "", emptyMessage: "" },
-      gallery: { allFilterLabel: "", openAriaLabelTemplate: "", modalCloseAriaLabel: "" },
       socials: { unavailableMessage: "", demoAriaSuffix: "" },
       share: { openActionsAriaLabel: "", shareLabel: "", copiedMessage: "", errorMessage: "" },
       empty: { generic: "" },
@@ -108,7 +108,12 @@
       projects: { enabled: false, heading: {}, map: { enabled: false, center: {}, zoom: 14, tileLayer: { url: "", attribution: "", maxZoom: 19 }, locations: [] }, featured: { enabled: false, items: [] } },
       trifold: { enabled: false, heading: {}, ariaLabel: "", mobileHint: "", panels: [] },
       agenda: { enabled: false, heading: {}, events: [] },
-      gallery: { enabled: false, heading: {}, categories: [], items: [] },
+      gallery: {
+        enabled: false,
+        heading: {},
+        facebook: { pageUrl: "", iframeTitle: "", fallbackLabel: "", fallbackTitle: "" },
+        tiktok: { profileUrl: "", iframeTitle: "", fallbackLabel: "", fallbackTitle: "" }
+      },
       socials: { enabled: false, heading: {}, items: [] }
     },
     footer: { enabled: false, description: "", navigationTitle: "", navigation: [], legalTitle: "", legalText: "", copyrightTemplate: "", technologyText: "" }
@@ -139,6 +144,34 @@
     } catch (_error) {
       return false;
     }
+  }
+
+  function parseHttpsUrl(value) {
+    const href = asText(value);
+    if (!isSafeUrl(href, { allowRelative: false })) return null;
+    try {
+      const url = new URL(href);
+      return url.protocol === "https:" ? url : null;
+    } catch (_error) {
+      return null;
+    }
+  }
+
+  function isFacebookPageUrl(value) {
+    const url = parseHttpsUrl(value);
+    if (!url || !["facebook.com", "www.facebook.com"].includes(url.hostname.toLowerCase())) return false;
+    const segments = url.pathname.split("/").filter(Boolean);
+    const reservedPaths = new Set([
+      "events", "groups", "login", "marketplace", "permalink.php", "photo", "photo.php",
+      "profile.php", "reel", "share", "story.php", "watch"
+    ]);
+    return segments.length === 1 && !reservedPaths.has(segments[0].toLowerCase());
+  }
+
+  function tiktokCreatorId(value) {
+    const url = parseHttpsUrl(value);
+    if (!url || !["tiktok.com", "www.tiktok.com"].includes(url.hostname.toLowerCase())) return "";
+    return url.pathname.match(/^\/@([A-Za-z0-9._]+)\/?$/)?.[1] || "";
   }
 
   function isValidIsoDateTime(value) {
@@ -687,23 +720,29 @@
       return true;
     });
 
-    const gallery = data.sections.gallery;
-    gallery.categories = normalizeRecords(gallery.categories, "sections.gallery.categories", (item, path) => {
-      if (item.id === "all") {
-        warn(`${path}.id`, "“all” está reservado para el filtro general; se omitió la categoría");
-        return false;
-      }
-      return requireTextFields(item, ["label"], path);
-    });
-    const galleryCategoryIds = new Set(gallery.categories.map(item => item.id));
-    gallery.items = normalizeRecords(gallery.items, "sections.gallery.items", (item, path) => {
-      if (!requireTextFields(item, ["title", "categoryId"], path)) return false;
-      if (!galleryCategoryIds.has(item.categoryId)) {
-        warn(`${path}.categoryId`, "categoría inexistente; se omitió la imagen");
-        return false;
-      }
-      item.image = normalizeImage(item.image, `${path}.image`, false, true);
-      return Boolean(item.image);
+    const publications = data.sections.gallery;
+    const facebookPageUrl = asText(publications.facebook.pageUrl);
+    if (facebookPageUrl && !isFacebookPageUrl(facebookPageUrl)) {
+      warn("sections.gallery.facebook.pageUrl", "debe ser la URL HTTPS de una página pública de Facebook; se omitió");
+      publications.facebook.pageUrl = "";
+    } else {
+      publications.facebook.pageUrl = facebookPageUrl;
+    }
+    const tiktokProfileUrl = asText(publications.tiktok.profileUrl);
+    if (tiktokProfileUrl && !tiktokCreatorId(tiktokProfileUrl)) {
+      warn("sections.gallery.tiktok.profileUrl", "debe ser la URL HTTPS de un perfil de TikTok; se omitió");
+      publications.tiktok.profileUrl = "";
+    } else {
+      publications.tiktok.profileUrl = tiktokProfileUrl;
+    }
+    [
+      [publications.facebook, "sections.gallery.facebook"],
+      [publications.tiktok, "sections.gallery.tiktok"]
+    ].forEach(([channel, path]) => {
+      ["iframeTitle", "fallbackLabel", "fallbackTitle"].forEach(field => {
+        channel[field] = asText(channel[field]);
+        if (publications.enabled !== false && !channel[field]) warn(`${path}.${field}`, "texto accesible obligatorio ausente");
+      });
     });
 
     data.sections.socials.items = normalizeRecords(data.sections.socials.items, "sections.socials.items", (item, path) => {
@@ -768,10 +807,6 @@
 
   function getVisibleFeaturedItems() {
     return data.sections.projects.featured.items.filter(item => imageIsAvailable(item.image));
-  }
-
-  function getVisibleGalleryItems() {
-    return data.sections.gallery.items.filter(item => imageIsAvailable(item.image));
   }
 
   function escapeHtml(value) {
@@ -895,6 +930,8 @@
     const districtHasContent = sections.district.metrics.length > 0 || (sections.axes.enabled !== false && sections.axes.items.length > 0);
     const projectsHasContent = (sections.projects.map.enabled !== false && sections.projects.map.locations.length > 0)
       || (sections.projects.featured.enabled !== false && getVisibleFeaturedItems().length > 0);
+    const publicationsHaveContent = isFacebookPageUrl(sections.gallery.facebook.pageUrl)
+      && Boolean(tiktokCreatorId(sections.gallery.tiktok.profileUrl));
     return {
       inicio: sections.hero.enabled !== false && Boolean(asText(identity.name)),
       indicadores: sections.stats.enabled !== false && sections.stats.items.length > 0,
@@ -905,21 +942,20 @@
       proyectos: sections.projects.enabled !== false && projectsHasContent,
       triptico: sections.trifold.enabled !== false && sections.trifold.panels.length > 0,
       agenda: sections.agenda.enabled !== false && sections.agenda.events.length > 0,
-      galeria: sections.gallery.enabled !== false && getVisibleGalleryItems().length > 0,
+      galeria: sections.gallery.enabled !== false && publicationsHaveContent,
       redes: sections.socials.enabled !== false && getVisibleSocials().length > 0
     };
   }
 
   const visibleSections = computeVisibleSections();
   let proposalModal = null;
-  let galleryModal = null;
   let radarChart = null;
   let projectMap = null;
   let featuredSwiper = null;
-  let gallerySwiper = null;
+  let facebookResizeTimer = null;
+  let facebookResizeBound = false;
   let roadmapStageId = data.sections.roadmap.defaultStageId;
   let eventFilter = data.ui.events.initialFilter;
-  let galleryFilter = "all";
   let proposalFilter = "all";
   let trifoldIndex = 0;
   let trifoldOpen = false;
@@ -1038,7 +1074,6 @@
     }
 
     $("#proposalModalClose").setAttribute("aria-label", displayText(data.ui.proposal.modalCloseAriaLabel));
-    $("#galleryModalClose").setAttribute("aria-label", displayText(data.ui.gallery.modalCloseAriaLabel));
   }
 
   function renderHeroLists() {
@@ -1834,81 +1869,116 @@
     renderEventFilters();
   }
 
-  function galleryCategoryById(id) {
-    return data.sections.gallery.categories.find(category => category.id === id);
+  function configurePublicationLink(selector, labelSelector, config, href) {
+    const link = $(selector);
+    addExternalLinkPolicy(link, href, true);
+    link.title = displayText(config.fallbackTitle);
+    link.setAttribute("aria-label", `${displayText(config.fallbackLabel)}; se abre en una pestaña nueva`);
+    setText(labelSelector, config.fallbackLabel);
   }
 
-  function renderGalleryFilters() {
+  function renderFacebookPagePlugin(config) {
+    const iframe = $("#facebookPageEmbed");
+    const shell = iframe.parentElement;
+    const shellStyles = getComputedStyle(shell);
+    const availableWidth = Math.floor(shell.clientWidth
+      - (Number.parseFloat(shellStyles.paddingLeft) || 0)
+      - (Number.parseFloat(shellStyles.paddingRight) || 0));
+    if (availableWidth < 180) return;
+    const pluginWidth = Math.min(500, availableWidth);
+    if (iframe.dataset.pluginWidth === String(pluginWidth) && iframe.src) return;
+    const pluginUrl = new URL("https://www.facebook.com/plugins/page.php");
+    pluginUrl.search = new URLSearchParams({
+      href: config.pageUrl,
+      tabs: "timeline",
+      width: String(pluginWidth),
+      height: "680",
+      small_header: "true",
+      adapt_container_width: "true",
+      hide_cover: "false",
+      show_facepile: "false"
+    });
+    iframe.dataset.pluginWidth = String(pluginWidth);
+    iframe.width = String(pluginWidth);
+    iframe.title = displayText(config.iframeTitle);
+    iframe.src = pluginUrl.href;
+  }
+
+  function initFacebookPagePlugin(config) {
+    renderFacebookPagePlugin(config);
+    if (facebookResizeBound) return;
+    facebookResizeBound = true;
+    window.addEventListener("resize", () => {
+      clearTimeout(facebookResizeTimer);
+      facebookResizeTimer = setTimeout(() => renderFacebookPagePlugin(config), 200);
+    }, { passive: true });
+  }
+
+  function labelTikTokIframe(shell, title) {
+    const frames = $$("iframe", shell);
+    frames.forEach(frame => {
+      frame.title = displayText(title);
+      frame.loading = "lazy";
+    });
+    return frames.length > 0;
+  }
+
+  function watchTikTokIframe(shell, title) {
+    if (labelTikTokIframe(shell, title) || !("MutationObserver" in window)) return;
+    const observer = new MutationObserver(() => {
+      if (labelTikTokIframe(shell, title)) observer.disconnect();
+    });
+    observer.observe(shell, { childList: true, subtree: true });
+    setTimeout(() => observer.disconnect(), 15000);
+  }
+
+  function loadTikTokEmbedScript() {
+    const alreadyLoaded = [...document.scripts].some(script => {
+      const url = parseHttpsUrl(script.src);
+      return url?.href === TIKTOK_EMBED_SCRIPT_URL;
+    });
+    if (alreadyLoaded) return;
+    const script = document.createElement("script");
+    script.src = TIKTOK_EMBED_SCRIPT_URL;
+    script.async = true;
+    document.body.append(script);
+  }
+
+  function renderTikTokCreatorProfile(config) {
+    const creatorId = tiktokCreatorId(config.profileUrl);
+    const shell = $("#tiktokEmbedShell");
+    const blockquote = createElement("blockquote", "tiktok-embed");
+    blockquote.cite = config.profileUrl;
+    blockquote.dataset.uniqueId = creatorId;
+    blockquote.dataset.embedType = "creator";
+    blockquote.dataset.embedFrom = "oembed";
+    blockquote.style.maxWidth = "720px";
+    blockquote.style.minWidth = "288px";
+
+    const profileUrl = new URL(config.profileUrl);
+    profileUrl.searchParams.set("refer", "creator_embed");
+    const profileLink = createElement("a", "", `@${creatorId}`);
+    addExternalLinkPolicy(profileLink, profileUrl.href, true);
+    profileLink.title = displayText(config.fallbackTitle);
+    profileLink.setAttribute("aria-label", `${displayText(config.fallbackLabel)}; se abre en una pestaña nueva`);
+    const content = createElement("section");
+    content.append(profileLink);
+    blockquote.append(content);
+    shell.replaceChildren(blockquote);
+
+    configurePublicationLink("#tiktokPublicationLink", "#tiktokPublicationLinkLabel", config, config.profileUrl);
+    watchTikTokIframe(shell, config.iframeTitle);
+    requestAnimationFrame(loadTikTokEmbedScript);
+  }
+
+  function renderPublications() {
     const section = data.sections.gallery;
-    const bar = $("#galleryFilters");
-    bar.replaceChildren();
-    const usedCategories = new Set(getVisibleGalleryItems().map(item => item.categoryId));
-    const filters = [{ id: "all", label: data.ui.gallery.allFilterLabel }, ...section.categories.filter(category => usedCategories.has(category.id))];
-    filters.forEach(filter => {
-      const button = createElement("button", `filter-btn${filter.id === galleryFilter ? " active" : ""}`, filter.label);
-      button.type = "button";
-      button.dataset.galleryFilter = filter.id;
-      button.setAttribute("aria-pressed", String(filter.id === galleryFilter));
-      bar.append(button);
-    });
-  }
-
-  function renderGallery(filter = galleryFilter) {
-    const section = data.sections.gallery;
-    galleryFilter = filter;
-    setText("#galleryKicker", section.heading.kicker);
-    setText("#galleryTitle", section.heading.title);
-    setText("#galleryDescription", section.heading.description);
-    const availableItems = getVisibleGalleryItems();
-    const items = filter === "all" ? availableItems : availableItems.filter(item => item.categoryId === filter);
-    if (gallerySwiper) {
-      gallerySwiper.destroy(true, true);
-      gallerySwiper = null;
-    }
-    const wrapper = $("#galleryWrapper");
-    wrapper.replaceChildren();
-    items.forEach(item => {
-      const slide = createElement("div", "swiper-slide");
-      const card = createElement("article", "gallery-card");
-      card.tabIndex = 0;
-      card.role = "button";
-      card.dataset.galleryId = item.id;
-      card.setAttribute("aria-label", displayText(formatTemplate(data.ui.gallery.openAriaLabelTemplate, { title: item.title })));
-      const overlay = createElement("div", "gallery-overlay");
-      overlay.append(createElement("span", "", galleryCategoryById(item.categoryId)?.label), createElement("h3", "", item.title));
-      card.append(createImage(item.image, "", `${recordPath(item, "sections.gallery.items")}.image`), overlay);
-      slide.append(card);
-      wrapper.append(slide);
-    });
-    renderGalleryFilters();
-    initGallerySwiper(items.length);
-  }
-
-  function initGallerySwiper(itemCount) {
-    if (!itemCount) return;
-    const shell = $(".gallerySwiper");
-    if (typeof window.Swiper === "undefined" || !swiperCssIsAvailable(shell)) {
-      shell.classList.add("swiper-unavailable");
-      return;
-    }
-    shell.classList.remove("swiper-unavailable");
-    gallerySwiper = new Swiper(shell, {
-      slidesPerView: 1.1,
-      spaceBetween: 16,
-      grabCursor: true,
-      pagination: { el: ".gallery-pagination", clickable: true },
-      breakpoints: { 480: { slidesPerView: 1.35 }, 768: { slidesPerView: 2.2 }, 1024: { slidesPerView: 3.2 } }
-    });
-  }
-
-  function openGallery(id) {
-    const item = getVisibleGalleryItems().find(entry => entry.id === id);
-    if (!item) return;
-    setImage($("#galleryModalImage"), item.image, `${recordPath(item, "sections.gallery.items")}.image`);
-    setText("#galleryModalCategory", joinParts([galleryCategoryById(item.categoryId)?.label, demoLabel(data.ui.demo.gallerySuffix)]));
-    setText("#galleryModalTitle", item.title);
-    setText("#galleryModalDescription", joinParts([item.image.caption, item.image.credit]));
-    showModal("galleryModal", galleryModal);
+    setText("#publicationsKicker", section.heading.kicker);
+    setText("#publicationsTitle", section.heading.title);
+    setText("#publicationsDescription", section.heading.description);
+    configurePublicationLink("#facebookPublicationLink", "#facebookPublicationLinkLabel", section.facebook, section.facebook.pageUrl);
+    requestAnimationFrame(() => initFacebookPagePlugin(section.facebook));
+    renderTikTokCreatorProfile(section.tiktok);
   }
 
   function renderSocials() {
@@ -2121,7 +2191,6 @@
   function initModals() {
     if (window.bootstrap?.Modal) {
       proposalModal = bootstrap.Modal.getOrCreateInstance($("#proposalModal"));
-      galleryModal = bootstrap.Modal.getOrCreateInstance($("#galleryModal"));
     }
     $$('[data-close-modal]').forEach(button => {
       button.addEventListener("click", () => {
@@ -2152,25 +2221,10 @@
         renderEvents(eventButton.dataset.eventFilter);
         return;
       }
-      const galleryFilterButton = event.target.closest('[data-gallery-filter]');
-      if (galleryFilterButton) {
-        renderGallery(galleryFilterButton.dataset.galleryFilter);
-        return;
-      }
-      const galleryCard = event.target.closest('[data-gallery-id]');
-      if (galleryCard) {
-        openGallery(galleryCard.dataset.galleryId);
-        return;
-      }
       if (event.target.closest('[data-social-unavailable]')) showToast(data.ui.socials.unavailableMessage);
     });
 
     document.addEventListener("keydown", event => {
-      const galleryCard = event.target.closest?.('[data-gallery-id]');
-      if (galleryCard && (event.key === "Enter" || event.key === " ")) {
-        event.preventDefault();
-        openGallery(galleryCard.dataset.galleryId);
-      }
       if (event.key === "Escape" && !window.bootstrap?.Modal) {
         $$(".modal-fallback-open").forEach(hideModalFallback);
       }
@@ -2210,7 +2264,7 @@
     runSection("proyectos", renderProjects);
     runSection("triptico", renderTrifold);
     runSection("agenda", () => renderEvents(eventFilter));
-    runSection("galeria", () => renderGallery("all"));
+    runSection("galeria", renderPublications);
     runSection("redes", renderSocials);
     runSection("inicio", renderHeroLists);
 

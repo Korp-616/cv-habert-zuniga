@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="">
   <meta name="theme-color" content="#0b3b60">
+  <link rel="icon" href="assets/img/main-profile.png" type="image/png">
   <meta property="og:title" content="">
   <meta property="og:description" content="">
   <meta name="twitter:title" content="">
@@ -250,14 +251,53 @@
     <section id="galeria" class="section-pad section-anchor" hidden>
       <div class="container">
         <div class="section-heading" data-aos="fade-up">
-          <span id="galleryKicker" class="section-kicker"></span>
-          <h2 id="galleryTitle"></h2>
-          <p id="galleryDescription" class="lead-copy"></p>
+          <span id="publicationsKicker" class="section-kicker"></span>
+          <h2 id="publicationsTitle"></h2>
+          <p id="publicationsDescription" class="lead-copy"></p>
         </div>
-        <div id="galleryFilters" class="filter-bar mt-4"></div>
-        <div class="swiper gallerySwiper mt-4" data-aos="fade-up">
-          <div id="galleryWrapper" class="swiper-wrapper"></div>
-          <div class="swiper-pagination gallery-pagination"></div>
+
+        <div class="publications-grid" data-aos="fade-up">
+          <article class="publication-card" aria-labelledby="facebookPublicationsTitle">
+            <header class="publication-card-header">
+              <span class="publication-platform-icon" aria-hidden="true"><i class="bi bi-facebook"></i></span>
+              <div>
+                <span class="mini-label">Facebook</span>
+                <h3 id="facebookPublicationsTitle">Publicaciones recientes</h3>
+              </div>
+            </header>
+            <div class="publication-embed publication-embed--facebook">
+              <iframe id="facebookPageEmbed" title="Publicaciones recientes de la página de Facebook"
+                width="500" height="680" scrolling="no" loading="lazy"
+                allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" allowfullscreen></iframe>
+            </div>
+            <footer class="publication-card-footer">
+              <a id="facebookPublicationLink" class="publication-fallback-link" target="_blank" rel="noopener noreferrer"
+                title="Abrir la página de Facebook en una pestaña nueva"
+                aria-label="Ver las publicaciones en Facebook; se abre en una pestaña nueva">
+                <span id="facebookPublicationLinkLabel">Ver en Facebook</span>
+                <i class="bi bi-arrow-up-right" aria-hidden="true"></i>
+              </a>
+            </footer>
+          </article>
+
+          <article class="publication-card" aria-labelledby="tiktokPublicationsTitle">
+            <header class="publication-card-header">
+              <span class="publication-platform-icon" aria-hidden="true"><i class="bi bi-tiktok"></i></span>
+              <div>
+                <span class="mini-label">TikTok</span>
+                <h3 id="tiktokPublicationsTitle">Publicaciones recientes</h3>
+              </div>
+            </header>
+            <div id="tiktokEmbedShell" class="publication-embed publication-embed--tiktok"></div>
+            <footer class="publication-card-footer">
+              <a id="tiktokPublicationLink" class="publication-fallback-link" target="_blank" rel="noopener noreferrer"
+                title="Abrir el perfil de TikTok en una pestaña nueva"
+                aria-label="Ver las publicaciones en TikTok; se abre en una pestaña nueva">
+                <span id="tiktokPublicationLinkLabel">Ver en TikTok</span>
+                <i class="bi bi-arrow-up-right" aria-hidden="true"></i>
+              </a>
+            </footer>
+          </article>
         </div>
       </div>
     </section>
@@ -315,20 +355,6 @@
           <button id="proposalModalClose" type="button" class="btn-close" data-bs-dismiss="modal" data-close-modal="proposalModal"></button>
         </div>
         <div id="modalBody" class="modal-body pt-0"></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal fade" id="galleryModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-      <div class="modal-content gallery-modal">
-        <button id="galleryModalClose" type="button" class="btn-close gallery-close" data-bs-dismiss="modal" data-close-modal="galleryModal"></button>
-        <img id="galleryModalImage" alt="">
-        <div class="gallery-modal-caption">
-          <span id="galleryModalCategory" class="section-kicker"></span>
-          <h3 id="galleryModalTitle"></h3>
-          <p id="galleryModalDescription"></p>
-        </div>
       </div>
     </div>
   </div>

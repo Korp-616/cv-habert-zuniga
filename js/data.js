@@ -111,7 +111,7 @@ const siteData = {
         { sectionId: "proyectos", label: "Proyectos" },
         { sectionId: "triptico", label: "Resumen" },
         { sectionId: "agenda", label: "Agenda" },
-        { sectionId: "galeria", label: "Documentos" },
+        { sectionId: "galeria", label: "Publicaciones" },
         { sectionId: "redes", label: "Redes" }
       ]
     },
@@ -126,7 +126,6 @@ const siteData = {
       mockSuffix: "" /* VACÍO INTENCIONAL: no mostrar rótulos MOCK en producción. */,
       modalLabel: "" /* VACÍO INTENCIONAL: no mostrar rótulos demostrativos. */,
       roadmapLabel: "" /* VACÍO INTENCIONAL: la hoja de ruta usa información documental. */,
-      gallerySuffix: "" /* VACÍO INTENCIONAL: las imágenes provienen de base_conocimiento. */,
       mapSuffix: "" /* VACÍO INTENCIONAL: no mostrar sufijos demostrativos. */,
       imageAltSuffix: "" /* VACÍO INTENCIONAL: no añadir "placeholder" a los textos alternativos. */
     },
@@ -164,11 +163,6 @@ const siteData = {
       pastStatus: "Evento pasado",
       emptyMessage: "No hay actividades oficiales publicadas para este filtro."
     },
-    gallery: {
-      allFilterLabel: "Todos",
-      openAriaLabelTemplate: "Abrir documento: {title}",
-      modalCloseAriaLabel: "Cerrar documento"
-    },
     socials: {
       unavailableMessage: "Este canal todavía no tiene un enlace oficial configurado.",
       demoAriaSuffix: "" /* VACÍO INTENCIONAL: no anunciar enlaces como demostrativos. */
@@ -185,7 +179,7 @@ const siteData = {
     quickActions: [
       { id: "quick-proposals", sectionId: "propuestas", label: "Propuestas", icon: "bi-grid-1x2" },
       { id: "quick-roadmap", sectionId: "roadmap", label: "Hoja de ruta", icon: "bi-signpost-split" },
-      { id: "quick-gallery", sectionId: "galeria", label: "Documentos", icon: "bi-images" }
+      { id: "quick-publications", sectionId: "galeria", label: "Publicaciones", icon: "bi-newspaper" }
     ]
   },
 
@@ -1309,28 +1303,25 @@ const siteData = {
     },
 
     gallery: {
-      enabled: true /* PENDIENTE: cambia a true después de agregar al menos un documento oficial con imagen, PDF o video verificado. */,
+      enabled: true,
       heading: {
-        kicker: "Anuncios y publicaciones",
-        title: "Anuncios a la comunidad",
-        description: "Material informativo."
+        kicker: "Facebook y TikTok",
+        title: "Últimas publicaciones",
+        description: "Consulta el contenido más reciente publicado en nuestros canales sociales."
       },
-      categories: [
-        { id: "actualidad", label: "Actualidad" }
-      ],
-      items: [
-        {
-          id: "pub-1",
-          title: "JEE declara infundada la tacha contra la candidatura",
-          categoryId: "actualidad",
-          image: {
-            src: "https://scontent.flim33-1.fna.fbcdn.net/v/t39.30808-6/783707671_1535835991891431_8150509842902855144_n.jpg?stp=dst-jpg_tt6&cstp=mx1122x1402&ctp=s1122x1402&_nc_cat=105&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=833d8c&_nc_ohc=OiuE09mvLq4Q7kNvwHfAzco&_nc_oc=AdrEPmYHi52p1JnYe_YfeQMmYrwrF_kp6V_wYcX_e2fiKiPnylMwyeqSpNy589H-28U&_nc_zt=23&_nc_ht=scontent.flim33-1.fna&_nc_gid=FdXhbKToySElk7-6941scg&_nc_ss=7b2a8&oh=00_AQGGku44tuEMFFlr0IdXheFbgwQSCEEVOcXRxUqRxt2grg&oe=6A91882B",
-            alt: "Publicación sobre la resolución favorable del Jurado Electoral Especial de Arequipa",
-            caption: "Resumen gráfico de propuestas y proyectos.",
-            credit: "" /* PENDIENTE: ingresa autor, organización o crédito oficial de la pieza. */
-          }
-        },
-      ]
+      facebook: {
+        // Página pública encontrada en sections.socials.items.
+        pageUrl: "https://www.facebook.com/ConsejeroRegionalArequipa/",
+        iframeTitle: "Publicaciones recientes de la página de Facebook",
+        fallbackLabel: "Ver en Facebook",
+        fallbackTitle: "Abrir la página de Facebook en una pestaña nueva"
+      },
+      tiktok: {
+        profileUrl: "https://www.tiktok.com/@amigossiempreamigos2",
+        iframeTitle: "Publicaciones recientes del perfil de TikTok @amigossiempreamigos2",
+        fallbackLabel: "Ver en TikTok",
+        fallbackTitle: "Abrir el perfil de TikTok en una pestaña nueva"
+      }
     },
 
     socials: {
@@ -1360,7 +1351,7 @@ const siteData = {
       { sectionId: "perfil", label: "Perfil" },
       { sectionId: "propuestas", label: "Propuestas" },
       { sectionId: "roadmap", label: "Hoja de ruta" },
-      { sectionId: "galeria", label: "Documentos" },
+      { sectionId: "galeria", label: "Publicaciones" },
       { sectionId: "redes", label: "Redes" }
     ],
     legalTitle: "Fuente y alcance",

@@ -55,7 +55,7 @@ const siteData = {
       period: "2027–2030",
       brandSubtitleTemplate: "{district} {period} · Arequipa Avancemos",
       portrait: { src:"assets/img/profile.png", alt: "Retrato de Harberth Zúñiga", caption: "", credit: "" } /* PENDIENTE: reemplaza "" por { src: "assets/img/retrato.webp", alt: "Retrato de Harberth Zúñiga", caption: "", credit: "" }. La pieza de WhatsApp no es un retrato aislado. */,
-      heroBackground: { src: "assets/img/hero-bg.png", alt: "Background", caption: "", credit: "" } /* PENDIENTE: reemplaza "" por { src: "assets/img/hero.webp", alt: "", caption: "", credit: "" }. Usa alt vacío solo si el fondo es decorativo. */
+      heroBackground: { src: "../assets/img/hero-bg.png", alt: "Background", caption: "", credit: "" } /* PENDIENTE: reemplaza "" por { src: "assets/img/hero.webp", alt: "", caption: "", credit: "" }. Usa alt vacío solo si el fondo es decorativo. */
     },
     ribbon: {
       enabled: true,

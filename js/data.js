@@ -43,7 +43,7 @@ const siteData = {
     seo: {
       titleTemplate: "{name} | Plan de Gobierno {district} {period}",
       descriptionTemplate: "Plan de Gobierno Municipal para {district} {period}: diagnóstico, 8 ejes estratégicos, propuestas y hoja de ruta.",
-      canonicalUrl: "" /* PENDIENTE: ingresa la URL HTTPS pública y definitiva del sitio. */
+      canonicalUrl: "https://hzuniga.net/"
     },
     identity: {
       name: "Harberth Zúñiga",
